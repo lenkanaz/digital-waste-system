@@ -2,7 +2,6 @@ import os
 import hashlib
 import numpy as np
 import pandas as pd
-import requests
 from datetime import datetime
 
 def scan_local(root: str) -> pd.DataFrame:
@@ -18,6 +17,8 @@ def scan_local(root: str) -> pd.DataFrame:
                     "size_bytes": s.st_size,
                     "last_access": datetime.fromtimestamp(s.st_atime),
                     "created": datetime.fromtimestamp(s.st_ctime),
+                    "days_since_access": (datetime.now() - datetime.fromtimestamp(s.st_atime)).days,
+                    "age_days": (datetime.now() - datetime.fromtimestamp(s.st_ctime)).days,
                     "source": "local"
                 })
             except:
