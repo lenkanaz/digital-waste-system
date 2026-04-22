@@ -5,7 +5,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.metrics import (
     classification_report, confusion_matrix,
-    roc_auc_score, roc_curve, ConfusionMatrixDisplay
+    roc_auc_score, roc_curve, ConfusionMatrixDisplay,
+    precision_recall_curve, average_precision_score
 )
 
 def evaluate_all(models_dict: dict, X_test, y_test):
@@ -71,3 +72,54 @@ def plot_feature_importance(rf_model, feature_names):
     plt.savefig('outputs/figures/feature_importance.png', dpi=150)
     plt.close()
     print("Feature importance grafiği kaydedildi.")
+
+def failure_analysis(model, X_test, y_test, feature_names):
+    preds = model.predict(X_test)
+    proba = model.predict_proba(X_test)[:, 1]
+
+    df = X_test.copy()
+    df['y_true'] = y_test.values
+    df['y_pred'] = preds
+    df['waste_prob'] = proba
+
+    fp = df[(df['y_pred'] == 1) & (df['y_true'] == 0)]
+    fn = df[(df['y_pred'] == 0) & (df['y_true'] == 1)]
+    tp = df[(df['y_pred'] == 1) & (df['y_true'] == 1)]
+    tn = df[(df['y_pred'] == 0) & (df['y_true'] == 0)]
+
+    print(f"\n=== FAILURE ANALYSIS ===")
+    print(f"TP: {len(tp)} | TN: {len(tn)} | FP: {len(fp)} | FN: {len(fn)}")
+
+    print(f"\nFalse Positives ({len(fp)}) — predicted waste, actually useful:")
+    print(fp[feature_names].mean().round(3))
+
+    print(f"\nFalse Negatives ({len(fn)}) — missed waste:")
+    print(fn[feature_names].mean().round(3))
+
+    # CSV kaydet
+    summary = pd.DataFrame({
+        'FP_mean': fp[feature_names].mean(),
+        'FN_mean': fn[feature_names].mean(),
+        'TP_mean': tp[feature_names].mean(),
+        'TN_mean': tn[feature_names].mean()
+    })
+    summary.to_csv('outputs/reports/failure_analysis.csv')
+    print("Failure analysis kaydedildi.")
+
+    # PR curve
+    precision, recall, _ = precision_recall_curve(y_test, proba)
+    ap = average_precision_score(y_test, proba)
+
+    plt.figure(figsize=(8, 5))
+    plt.plot(recall, precision, color='steelblue', lw=2, label=f'AP={ap:.3f}')
+    plt.xlabel('Recall')
+    plt.ylabel('Precision')
+    plt.title('Precision-Recall Curve — Random Forest')
+    plt.legend()
+    plt.grid(True, alpha=0.3)
+    plt.tight_layout()
+    plt.savefig('outputs/figures/precision_recall.png', dpi=150)
+    plt.close()
+    print("PR curve kaydedildi.")
+
+    return fp, fn

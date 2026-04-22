@@ -46,6 +46,10 @@ def main():
     evaluate_all(models, X_test, y_test)
     plot_feature_importance(rf, FEATURES)
 
+    print("\nFailure analysis çalışıyor...")
+    from src.evaluation import failure_analysis
+    fp, fn = failure_analysis(rf, X_test, y_test, FEATURES)
+
     sim = simulate_users(rf, cfg)
     print("\nSimülasyon sonuçları:")
     print(sim.to_string())
