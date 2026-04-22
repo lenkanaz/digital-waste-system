@@ -32,7 +32,7 @@ def train(df: pd.DataFrame, cfg: dict):
 
     # Random Forest
     rf = RandomForestClassifier(
-        n_estimators=100,
+        n_estimators=50,
         random_state=cfg['data']['random_seed']
     )
     rf.fit(X_train, y_train)

@@ -59,3 +59,15 @@ def evaluate_all(models_dict: dict, X_test, y_test):
     print("Grafikler kaydedildi.")
 
     return results_df
+
+def plot_feature_importance(rf_model, feature_names):
+    importances = rf_model.feature_importances_
+    indices = np.argsort(importances)[::-1]
+    plt.figure(figsize=(8, 5))
+    plt.bar(range(len(feature_names)), importances[indices])
+    plt.xticks(range(len(feature_names)), [feature_names[i] for i in indices], rotation=45)
+    plt.title('Feature Importance — Random Forest')
+    plt.tight_layout()
+    plt.savefig('outputs/figures/feature_importance.png', dpi=150)
+    plt.close()
+    print("Feature importance grafiği kaydedildi.")
