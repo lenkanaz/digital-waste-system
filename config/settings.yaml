@@ -1,7 +1,7 @@
 data:
   raw_path: "data/raw/"
   processed_path: "data/processed/"
-  synthetic_n: 5000
+  synthetic_n: 100000
   random_seed: 42
 
 model:
