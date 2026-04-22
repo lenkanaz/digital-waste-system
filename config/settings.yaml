@@ -12,3 +12,7 @@ co2:
   kwh_per_gb: 0.000849
   carbon_tr: 0.475
   pue: 1.58
+
+  unsplash:
+  client_id: "TMJn3JBWklV193o204pZCfVX2P5wgN9EmniLexz35Xw"
+  n_photos: 300

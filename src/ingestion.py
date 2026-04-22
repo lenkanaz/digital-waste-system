@@ -41,3 +41,25 @@ def generate_synthetic(n: int, seed: int) -> pd.DataFrame:
         "age_days": age,
         "source": "synthetic"
     })
+def fetch_unsplash(client_id: str, n: int = 300) -> pd.DataFrame:
+    import requests
+    rows, page = [], 1
+    while len(rows) < n:
+        resp = requests.get(
+            "https://api.unsplash.com/photos",
+            params={"per_page": 30, "page": page},
+            headers={"Authorization": f"Client-ID {client_id}"}
+        )
+        if resp.status_code != 200:
+            break
+        for p in resp.json():
+            rows.append({
+                "file_id": f"usp_{p['id']}",
+                "extension": ".jpg",
+                "size_bytes": p['width'] * p['height'] * 3,
+                "days_since_access": 0,
+                "age_days": (datetime.now() - datetime.fromisoformat(p['created_at'][:10])).days,
+                "source": "open_data"
+            })
+        page += 1
+    return pd.DataFrame(rows[:n])
