@@ -1,5 +1,7 @@
 # Digital Waste System
 
+Global data storage consumes over 200 TWh of electricity annually — more than some countries. Most of that energy powers files no one has opened in years.
+
 In school, we did a project on physical waste collection — sorting, measuring, figuring out what people throw away without thinking. At some point I started wondering if the same thing happens with digital files. Nobody audits their storage. Files pile up, get forgotten, and keep consuming energy for years after they become useless.
 
 So I built a system to measure it. It scans file metadata, models waste behavior, and estimates the CO₂ cost of data nobody uses.
@@ -9,6 +11,8 @@ I ran it on my own machine. Out of 736 files, it flagged 1 (~2.7 MB) — my lapt
 ---
 
 ## What it does
+
+*This project explores digital waste using heuristic proxy labels — it should be interpreted as a file ranking system rather than a definitive waste classifier.*
 
 Scans file metadata from three sources, engineers behavioral features, trains ML models to classify files as waste or not-waste, and simulates how different user types accumulate storage debt over time.
 
@@ -174,7 +178,7 @@ Cluster 2 having the highest waste rate was unexpected. These are files accessed
 - Single machine, single user. Behavior across different OS or usage patterns is unknown.
 - `entropy_score` is a proxy feature estimated from extension type, not actual byte-level entropy. Real entropy requires reading file content — only feasible for locally scanned files.
 - Model trained on real + synthetic mix — performance may partially reflect synthetic assumptions.
-- The current implementation lacks a safelist for critical system files (e.g., `.dll`, `.sys`, `.git`). In a production environment, a pre-inference filter would be essential to prevent accidental flagging of OS-critical assets.
+- The current implementation lacks a safelist for critical system files (e.g., `.dll`, `.sys`, `.git`). In a production environment, a pre-inference filter would be essential.
 
 ---
 
