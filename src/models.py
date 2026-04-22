@@ -28,8 +28,6 @@ def train(df: pd.DataFrame, cfg: dict):
         ('scaler', StandardScaler()),
         ('clf', LogisticRegression(random_state=cfg['data']['random_seed']))
     ])
-    cv_scores = cross_val_score(lr, X_train, y_train, cv=cfg['model']['cv_folds'], scoring='f1')
-    print(f"LR CV F1: {cv_scores.mean():.3f} ± {cv_scores.std():.3f}")
     lr.fit(X_train, y_train)
 
     # Random Forest

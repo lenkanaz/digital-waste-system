@@ -1,0 +1,4 @@
+user_type,waste_rate,avg_waste_prob,reclaimable_gb,total_co2_g
+messy_hoarder,0.448,0.457,24.09,33.2333
+active_user,0.011,0.06,0.02,1.6546
+heavy_media,0.368,0.409,46.43,90.3374

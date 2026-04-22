@@ -6,7 +6,7 @@ data:
 
 model:
   test_size: 0.20
-  cv_folds: 5
+  cv_folds: 3
 
 co2:
   kwh_per_gb: 0.000849
