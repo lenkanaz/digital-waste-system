@@ -13,6 +13,6 @@ co2:
   carbon_tr: 0.475
   pue: 1.58
 
-  unsplash:
+unsplash:
   client_id: "TMJn3JBWklV193o204pZCfVX2P5wgN9EmniLexz35Xw"
-  n_photos: 300
+  n_photos: 30

@@ -2,6 +2,7 @@ import os
 import hashlib
 import numpy as np
 import pandas as pd
+import requests
 from datetime import datetime
 
 def scan_local(root: str) -> pd.DataFrame:
