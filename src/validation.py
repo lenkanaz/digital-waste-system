@@ -33,6 +33,6 @@ def run_validation(df_local, df_synthetic):
 
 if __name__ == "__main__":
     df = pd.read_csv('data/processed/merged.csv')
-    df_local = df[df['source'] == 'local']
+    df_local = df[(df['source'] == 'local') & (df['size_bytes'] > 1000)]
     df_synthetic = df[df['source'] == 'synthetic']
     run_validation(df_local, df_synthetic)
