@@ -1,12 +1,34 @@
 import pandas as pd
 import yaml
+import numpy as np
 from src.features import build_features
-from src.labeling import create_labels
-from src.models import train
+from src.labeling import create_labels, baseline_predict
+from src.models import train, FEATURES
+from src.evaluation import evaluate_all
 
+print("Veri yükleniyor...")
 df = pd.read_csv('data/processed/merged.csv')
 cfg = yaml.safe_load(open('config/settings.yaml'))
+
+print("Feature engineering...")
 df = build_features(df, cfg)
+
+print("Labeling...")
 df = create_labels(df)
+
+print("Model eğitiliyor...")
 lr, rf, X_test, y_test = train(df, cfg)
-print('Bitti')
+
+print("Evaluation...")
+baseline = baseline_predict(
+    pd.DataFrame({'days_since_access': X_test['days_since_access'].values})
+)
+
+models = {
+    'Baseline': baseline,
+    'Logistic Regression': lr,
+    'Random Forest': rf
+}
+
+evaluate_all(models, X_test, y_test)
+print("Tamamlandı!")
