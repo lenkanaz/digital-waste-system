@@ -4,7 +4,7 @@ import joblib
 from src.features import build_features
 from src.labeling import create_labels, baseline_predict
 from src.models import train, FEATURES
-from src.evaluation import evaluate_all, plot_feature_importance
+from src.evaluation import evaluate_all, plot_feature_importance, failure_analysis
 from src.simulation import simulate_users
 import os
 
@@ -19,7 +19,6 @@ def main():
     df = create_labels(df)
     print(f"    Waste: {df['label'].sum()} / {len(df)}")
 
-    # Model zaten varsa yükle, yoksa eğit
     if os.path.exists('outputs/models/random_forest.pkl'):
         print("Kaydedilmiş model yükleniyor...")
         rf = joblib.load('outputs/models/random_forest.pkl')
@@ -47,8 +46,20 @@ def main():
     plot_feature_importance(rf, FEATURES)
 
     print("\nFailure analysis çalışıyor...")
-    from src.evaluation import failure_analysis
     fp, fn = failure_analysis(rf, X_test, y_test, FEATURES)
+
+    # Gerçek local dosyalar için reclaimable hesapla
+    local_mask = df['source'] == 'local'
+    if local_mask.sum() > 0:
+        local_df_real = df[local_mask].copy()
+        local_features = local_df_real[FEATURES].fillna(0)
+        local_proba = rf.predict_proba(local_features)[:, 1]
+        local_waste = local_df_real[local_proba > 0.5]
+        reclaimable_mb = local_waste['size_mb'].sum()
+        print(f"\n=== GERÇEK LOCAL DOSYALAR ===")
+        print(f"Taranan: {local_mask.sum()} dosya")
+        print(f"Waste flagged: {len(local_waste)} dosya")
+        print(f"Reclaimable: {reclaimable_mb:.1f} MB ({reclaimable_mb/1000:.2f} GB)")
 
     sim = simulate_users(rf, cfg)
     print("\nSimülasyon sonuçları:")
