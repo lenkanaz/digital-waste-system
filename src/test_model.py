@@ -5,6 +5,7 @@ from src.features import build_features
 from src.labeling import create_labels, baseline_predict
 from src.models import train, FEATURES
 from src.evaluation import evaluate_all
+from src.simulation import simulate_users
 
 print("Veri yükleniyor...")
 df = pd.read_csv('data/processed/merged.csv')
@@ -31,4 +32,10 @@ models = {
 }
 
 evaluate_all(models, X_test, y_test)
-print("Tamamlandı!")
+
+print("\nSimülasyon çalışıyor...")
+sim_results = simulate_users(rf, cfg)
+print(sim_results.to_string())
+sim_results.to_csv('outputs/reports/simulation_results.csv', index=False)
+
+print("\nTamamlandı!")
